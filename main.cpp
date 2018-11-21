@@ -77,11 +77,11 @@ int main() {
     while (true) {
         std::cout << "Please enter a 128 bit or 32 hex digit plaintext: ";
         std::cin >> input;
-        if (input.length() == 16) {
+        if (input.length() == 32) {
             plaintext = hex_to_bin(input);
             std::cout << "Entered hex, binary representation: " << plaintext << std::endl;
             break;
-        } else if (input.length() == 64) {
+        } else if (input.length() == 128) {
             plaintext = input;
             std::string hex = bin_to_hex(plaintext);
             std::cout << "Entered binary, hex representation: " << hex << std::endl;
