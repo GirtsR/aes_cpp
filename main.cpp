@@ -50,22 +50,22 @@ std::string bin_to_hex(std::string binary) {
     std::string hex;
     for (int i = 0; i < binary.length(); i += 4) {
         std::string digits = binary.substr(i, 4);
-        if (digits.compare("0000") == 0) hex += '0';
-        else if (digits.compare("0001") == 0) hex += '1';
-        else if (digits.compare("0010") == 0) hex += '2';
-        else if (digits.compare("0011") == 0) hex += '3';
-        else if (digits.compare("0100") == 0) hex += '4';
-        else if (digits.compare("0101") == 0) hex += '5';
-        else if (digits.compare("0110") == 0) hex += '6';
-        else if (digits.compare("0111") == 0) hex += '7';
-        else if (digits.compare("1000") == 0) hex += '8';
-        else if (digits.compare("1001") == 0) hex += '9';
-        else if (digits.compare("1010") == 0) hex += 'A';
-        else if (digits.compare("1011") == 0) hex += 'B';
-        else if (digits.compare("1100") == 0) hex += 'C';
-        else if (digits.compare("1101") == 0) hex += 'D';
-        else if (digits.compare("1110") == 0) hex += 'E';
-        else if (digits.compare("1111") == 0) hex += 'F';
+        if (digits == "0000") hex += '0';
+        else if (digits == "0001") hex += '1';
+        else if (digits == "0010") hex += '2';
+        else if (digits == "0011") hex += '3';
+        else if (digits == "0100") hex += '4';
+        else if (digits == "0101") hex += '5';
+        else if (digits == "0110") hex += '6';
+        else if (digits == "0111") hex += '7';
+        else if (digits == "1000") hex += '8';
+        else if (digits == "1001") hex += '9';
+        else if (digits == "1010") hex += 'A';
+        else if (digits == "1011") hex += 'B';
+        else if (digits == "1100") hex += 'C';
+        else if (digits == "1101") hex += 'D';
+        else if (digits == "1110") hex += 'E';
+        else if (digits == "1111") hex += 'F';
     }
     return hex;
 }
@@ -92,15 +92,28 @@ int main() {
     }
 
     std::string key;
+    unsigned int number_of_rounds;
     while (true) {
         std::cout << "Please enter a 128, 192 or 256 bit key: ";
         std::cin >> key;
         size_t key_len = key.length();
-        if (key_len == 128 || key_len == 192 || key_len == 256) {
+        if (key_len == 128) {
+            number_of_rounds = 10;
+            break;
+        } else if (key_len == 192) {
+            number_of_rounds = 12;
+            break;
+        } else if (key_len == 256) {
+            number_of_rounds = 14;
             break;
         } else {
-            std::cout << "Incorrect key length";
+            std::cout << "Incorrect key length" << std::endl;
         }
+    }
+
+    for (unsigned int i = 1; i <= number_of_rounds; i++) {
+        std::cout << "Round " << i << ": ";
+        //TODO - do stuff
     }
     return 0;
 }
