@@ -1,6 +1,8 @@
 /**
  * Created by Ģirts Rudzišs, Emīls Ozoliņš
  *
+ *
+ * 00010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001
  */
 
 #include <iostream>
@@ -70,6 +72,22 @@ std::string bin_to_hex(std::string binary) {
     return hex;
 }
 
+void AddRoundKey() {
+
+}
+
+void SubBytes() {
+
+}
+
+void ShiftRows() {
+
+}
+
+void MixColumns() {
+
+}
+
 int main() {
     std::string plaintext;
     std::string input;
@@ -111,9 +129,21 @@ int main() {
         }
     }
 
-    for (unsigned int i = 1; i <= number_of_rounds; i++) {
-        std::cout << "Round " << i << ": ";
+    for (unsigned int round = 1; round <= number_of_rounds; round++) {
+        std::cout << "Round " << round << ": ";
         //TODO - do stuff
+
+        SubBytes();
+
+        ShiftRows();
+
+        if (round != number_of_rounds) {
+            MixColumns();
+            AddRoundKey();
+        } else { //Last round
+            AddRoundKey();
+        }
     }
+
     return 0;
 }
