@@ -111,21 +111,44 @@ int main() {
 
     std::string key;
     unsigned int number_of_rounds;
+    unsigned int state_columns = 4;
+    unsigned int key_columns;
     while (true) {
         std::cout << "Please enter a 128, 192 or 256 bit key: ";
         std::cin >> key;
         size_t key_len = key.length();
         if (key_len == 128) {
             number_of_rounds = 10;
+            key_columns = 4;
             break;
         } else if (key_len == 192) {
             number_of_rounds = 12;
+            key_columns = 6;
             break;
         } else if (key_len == 256) {
             number_of_rounds = 14;
+            key_columns = 8;
             break;
         } else {
             std::cout << "Incorrect key length" << std::endl;
+        }
+    }
+
+    std::string state[4][state_columns]; // 4 rows and Nb columns
+    int state_count = 0;
+    for(int i = 0; i < 4; i++) {
+        for (int j = 0; j < state_columns; j++) {
+            state[i][j] = plaintext.substr(state_count * 8, 8);
+            state_count++;
+        }
+    }
+
+    std::string cipher_key[4][key_columns]; // 4 rows and Nk columns
+    int key_count = 0;
+    for(int i = 0; i < 4; i++) {
+        for (int j = 0; j < key_columns; j++) {
+            cipher_key[i][j] = plaintext.substr(key_count * 8, 8);
+            key_count++;
         }
     }
 
