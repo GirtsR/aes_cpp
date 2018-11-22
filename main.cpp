@@ -136,7 +136,7 @@ int main() {
 
     std::string state[4][state_columns]; // 4 rows and Nb columns
     int state_count = 0;
-    for(int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         for (int j = 0; j < state_columns; j++) {
             state[i][j] = plaintext.substr(state_count * 8, 8);
             state_count++;
@@ -145,7 +145,7 @@ int main() {
 
     std::string cipher_key[4][key_columns]; // 4 rows and Nk columns
     int key_count = 0;
-    for(int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         for (int j = 0; j < key_columns; j++) {
             cipher_key[i][j] = plaintext.substr(key_count * 8, 8);
             key_count++;
