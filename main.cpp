@@ -7,25 +7,6 @@
 
 #include <iostream>
 
-std::string s_box[256] = {
-    "63", "7c", "77", "7b", "f2", "6b", "6f", "c5", "30", "01", "67", "2b", "fe", "d7", "ab", "76",
-    "ca", "82", "c9", "7d", "fa", "59", "47", "f0", "ad", "d4", "a2", "af", "9c", "a4", "72", "c0",
-    "b7", "fd", "93", "26", "36", "3f", "f7", "cc", "34", "a5", "e5", "f1", "71", "d8", "31", "15",
-    "04", "c7", "23", "c3", "18", "96", "05", "9a", "07", "12", "80", "e2", "eb", "27", "b2", "75",
-    "09", "83", "2c", "1a", "1b", "6e", "5a", "a0", "52", "3b", "d6", "b3", "29", "e3", "2f", "84",
-    "53", "d1", "00", "ed", "20", "fc", "b1", "5b", "6a", "cb", "be", "39", "4a", "4c", "58", "cf",
-    "d0", "ef", "aa", "fb", "43", "4d", "33", "85", "45", "f9", "02", "7f", "50", "3c", "9f", "a8",
-    "51", "a3", "40", "8f", "92", "9d", "38", "f5", "bc", "b6", "da", "21", "10", "ff", "f3", "d2",
-    "cd", "0c", "13", "ec", "5f", "97", "44", "17", "c4", "a7", "7e", "3d", "64", "5d", "19", "73",
-    "60", "81", "4f", "dc", "22", "2a", "90", "88", "46", "ee", "b8", "14", "de", "5e", "0b", "db",
-    "e0", "32", "3a", "0a", "49", "06", "24", "5c", "c2", "d3", "ac", "62", "91", "95", "e4", "79",
-    "e7", "c8", "37", "6d", "8d", "d5", "4e", "a9", "6c", "56", "f4", "ea", "65", "7a", "ae", "08",
-    "ba", "78", "25", "2e", "1c", "a6", "b4", "c6", "e8", "dd", "74", "1f", "4b", "bd", "8b", "8a",
-    "70", "3e", "b5", "66", "48", "03", "f6", "0e", "61", "35", "57", "b9", "86", "c1", "1d", "9e",
-    "e1", "f8", "98", "11", "69", "d9", "8e", "94", "9b", "1e", "87", "e9", "ce", "55", "28", "df",
-    "8c", "a1", "89", "0d", "bf", "e6", "42", "68", "41", "99", "2d", "0f", "b0", "54", "bb", "16"
-};
-
 std::string hex_to_bin(std::string hex) {
     std::string binary;
     for (int i = 0; i < hex.length(); i++) {
@@ -91,6 +72,46 @@ std::string bin_to_hex(std::string binary) {
     return hex;
 }
 
+std::string xor_32(std::string block1, std::string block2) {
+    auto bitset = std::bitset<32>(block1) ^std::bitset<32>(block2);
+    return bitset.to_string();
+}
+
+std::string SubWord(std::string temp) {
+    std::string s_box[256] = {
+        "63", "7c", "77", "7b", "f2", "6b", "6f", "c5", "30", "01", "67", "2b", "fe", "d7", "ab", "76",
+        "ca", "82", "c9", "7d", "fa", "59", "47", "f0", "ad", "d4", "a2", "af", "9c", "a4", "72", "c0",
+        "b7", "fd", "93", "26", "36", "3f", "f7", "cc", "34", "a5", "e5", "f1", "71", "d8", "31", "15",
+        "04", "c7", "23", "c3", "18", "96", "05", "9a", "07", "12", "80", "e2", "eb", "27", "b2", "75",
+        "09", "83", "2c", "1a", "1b", "6e", "5a", "a0", "52", "3b", "d6", "b3", "29", "e3", "2f", "84",
+        "53", "d1", "00", "ed", "20", "fc", "b1", "5b", "6a", "cb", "be", "39", "4a", "4c", "58", "cf",
+        "d0", "ef", "aa", "fb", "43", "4d", "33", "85", "45", "f9", "02", "7f", "50", "3c", "9f", "a8",
+        "51", "a3", "40", "8f", "92", "9d", "38", "f5", "bc", "b6", "da", "21", "10", "ff", "f3", "d2",
+        "cd", "0c", "13", "ec", "5f", "97", "44", "17", "c4", "a7", "7e", "3d", "64", "5d", "19", "73",
+        "60", "81", "4f", "dc", "22", "2a", "90", "88", "46", "ee", "b8", "14", "de", "5e", "0b", "db",
+        "e0", "32", "3a", "0a", "49", "06", "24", "5c", "c2", "d3", "ac", "62", "91", "95", "e4", "79",
+        "e7", "c8", "37", "6d", "8d", "d5", "4e", "a9", "6c", "56", "f4", "ea", "65", "7a", "ae", "08",
+        "ba", "78", "25", "2e", "1c", "a6", "b4", "c6", "e8", "dd", "74", "1f", "4b", "bd", "8b", "8a",
+        "70", "3e", "b5", "66", "48", "03", "f6", "0e", "61", "35", "57", "b9", "86", "c1", "1d", "9e",
+        "e1", "f8", "98", "11", "69", "d9", "8e", "94", "9b", "1e", "87", "e9", "ce", "55", "28", "df",
+        "8c", "a1", "89", "0d", "bf", "e6", "42", "68", "41", "99", "2d", "0f", "b0", "54", "bb", "16"
+    };
+
+    std::string result;
+
+    for (int i = 0; i < 4; i++) {
+        std::string byte = temp.substr(i, 8);
+        auto location = strtol(byte.c_str(), NULL, 2);
+        result += hex_to_bin(s_box[location]);
+    }
+    return result;
+}
+
+std::string RotWord(std::string temp) {
+    //TODO - implement me
+    return temp;
+
+}
 void AddRoundKey() {
 
 }
@@ -170,6 +191,56 @@ int main() {
             key_count++;
         }
     }
+
+    /**
+     * KeyExpansion
+     */
+    std::string temp;
+
+    int i = 0;
+    int keys_total = 4 * (number_of_rounds + 1);
+    std::string w[keys_total];
+
+    while (i < key_columns) {
+        //TODO - fix me
+        for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < key_columns; k++) {
+                std::cout << cipher_key[k][j] << std::endl;
+                temp += cipher_key[k][j];
+            }
+        }
+        w[i] = temp;
+        temp.clear();
+        std::cout << "Key: " << w[i] << std::endl;
+        i++;
+    }
+
+    //Round constants - https://en.wikipedia.org/wiki/Rijndael_key_schedule
+    std::string rc_i[29] = {"01", "02", "04", "08", "10", "20", "40", "80", "1B", "36",
+                            "6C", "D8", "AB", "4D", "9A", "2F", "5E", "BC", "63", "C6",
+                            "97", "35", "6A", "D4", "B3", "7D", "FA", "EF", "C5"};
+
+    while (i < keys_total) {
+        temp = w[i - 1];
+        if (i % key_columns == 0) {
+            std::string rcon_i = rc_i[i / key_columns] + "00" + "00" + "00" + "00";
+            rcon_i = hex_to_bin(rcon_i);
+            temp = xor_32(SubWord(RotWord(temp)), rcon_i);
+        } else if (key_columns > 6 && i % key_columns == 4) {
+            temp = SubWord(temp);
+        }
+        w[i] = xor_32(w[i - key_columns], temp);
+        i++;
+    }
+    std::cout << "Final expanded keys:" << std::endl;
+    for (int j = 0; j < i; j++) {
+        std::cout << w[i] << std::endl;
+    }
+    /**
+     * KeyExpansion end
+     */
+
+    AddRoundKey();
 
     for (unsigned int round = 1; round <= number_of_rounds; round++) {
         std::cout << "Round " << round << ": ";
