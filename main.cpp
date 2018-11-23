@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <bitset>
+#include <queue>
 
 std::string hex_to_bin(std::string hex) {
     std::string binary;
@@ -142,6 +143,7 @@ std::string RotWord(std::string temp) {
     return result;
 
 }
+
 void AddRoundKey() {
 
 }
@@ -157,8 +159,23 @@ void SubBytes(std::string (&state)[4][state_columns]) {
     }
 }
 
-void ShiftRows() {
-
+// TODO: Not sure if works
+void ShiftRows(std::string (&state)[4][state_columns]) { // TODO: I am sorry for this crap. Will rewrite it (maybe)
+    int row_len = 4; // TODO: Constant
+    for (int row = 0; row < row_len; row++) {
+        int shift_pos = row;
+        std::queue<std::string> tmp;
+        for (int pos = 0; pos < shift_pos; pos++) {
+            tmp.push(state[row][pos]);
+        }
+        for (int pos = shift_pos; pos < row_len; pos++) {
+            state[row][pos - shift_pos] = state[row][pos];
+        }
+        for (int pos = row_len - shift_pos; pos < row_len; pos++) {
+            state[row][pos] = tmp.front();
+            tmp.pop();
+        }
+    }
 }
 
 void MixColumns() {
@@ -288,7 +305,7 @@ int main() {
 
         SubBytes(state);
 
-        ShiftRows();
+        ShiftRows(state);
 
         if (round != number_of_rounds) {
             MixColumns();
