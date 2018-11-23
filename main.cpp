@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include <bitset>
 
 std::string hex_to_bin(std::string hex) {
     std::string binary;
@@ -93,30 +94,32 @@ int hex_to_decimal(char hex) {
 }
 
 std::string xor_32(std::string block1, std::string block2) {
-    auto bitset = std::bitset<32>(block1) ^ std::bitset<32>(block2);
+    auto bitset = std::bitset<32>(block1) ^std::bitset<32>(block2);
     return bitset.to_string();
 }
 
-std::string SubWord(std::string temp) {
-    std::string s_box[16][16] = {
-        {"63", "7c", "77", "7b", "f2", "6b", "6f", "c5", "30", "01", "67", "2b", "fe", "d7", "ab", "76"},
-        {"ca", "82", "c9", "7d", "fa", "59", "47", "f0", "ad", "d4", "a2", "af", "9c", "a4", "72", "c0"},
-        {"b7", "fd", "93", "26", "36", "3f", "f7", "cc", "34", "a5", "e5", "f1", "71", "d8", "31", "15"},
-        {"04", "c7", "23", "c3", "18", "96", "05", "9a", "07", "12", "80", "e2", "eb", "27", "b2", "75"},
-        {"09", "83", "2c", "1a", "1b", "6e", "5a", "a0", "52", "3b", "d6", "b3", "29", "e3", "2f", "84"},
-        {"53", "d1", "00", "ed", "20", "fc", "b1", "5b", "6a", "cb", "be", "39", "4a", "4c", "58", "cf"},
-        {"d0", "ef", "aa", "fb", "43", "4d", "33", "85", "45", "f9", "02", "7f", "50", "3c", "9f", "a8"},
-        {"51", "a3", "40", "8f", "92", "9d", "38", "f5", "bc", "b6", "da", "21", "10", "ff", "f3", "d2"},
-        {"cd", "0c", "13", "ec", "5f", "97", "44", "17", "c4", "a7", "7e", "3d", "64", "5d", "19", "73"},
-        {"60", "81", "4f", "dc", "22", "2a", "90", "88", "46", "ee", "b8", "14", "de", "5e", "0b", "db"},
-        {"e0", "32", "3a", "0a", "49", "06", "24", "5c", "c2", "d3", "ac", "62", "91", "95", "e4", "79"},
-        {"e7", "c8", "37", "6d", "8d", "d5", "4e", "a9", "6c", "56", "f4", "ea", "65", "7a", "ae", "08"},
-        {"ba", "78", "25", "2e", "1c", "a6", "b4", "c6", "e8", "dd", "74", "1f", "4b", "bd", "8b", "8a"},
-        {"70", "3e", "b5", "66", "48", "03", "f6", "0e", "61", "35", "57", "b9", "86", "c1", "1d", "9e"},
-        {"e1", "f8", "98", "11", "69", "d9", "8e", "94", "9b", "1e", "87", "e9", "ce", "55", "28", "df"},
-        {"8c", "a1", "89", "0d", "bf", "e6", "42", "68", "41", "99", "2d", "0f", "b0", "54", "bb", "16"}
-    };
+static std::string s_box[16][16] = {
+    {"63", "7c", "77", "7b", "f2", "6b", "6f", "c5", "30", "01", "67", "2b", "fe", "d7", "ab", "76"},
+    {"ca", "82", "c9", "7d", "fa", "59", "47", "f0", "ad", "d4", "a2", "af", "9c", "a4", "72", "c0"},
+    {"b7", "fd", "93", "26", "36", "3f", "f7", "cc", "34", "a5", "e5", "f1", "71", "d8", "31", "15"},
+    {"04", "c7", "23", "c3", "18", "96", "05", "9a", "07", "12", "80", "e2", "eb", "27", "b2", "75"},
+    {"09", "83", "2c", "1a", "1b", "6e", "5a", "a0", "52", "3b", "d6", "b3", "29", "e3", "2f", "84"},
+    {"53", "d1", "00", "ed", "20", "fc", "b1", "5b", "6a", "cb", "be", "39", "4a", "4c", "58", "cf"},
+    {"d0", "ef", "aa", "fb", "43", "4d", "33", "85", "45", "f9", "02", "7f", "50", "3c", "9f", "a8"},
+    {"51", "a3", "40", "8f", "92", "9d", "38", "f5", "bc", "b6", "da", "21", "10", "ff", "f3", "d2"},
+    {"cd", "0c", "13", "ec", "5f", "97", "44", "17", "c4", "a7", "7e", "3d", "64", "5d", "19", "73"},
+    {"60", "81", "4f", "dc", "22", "2a", "90", "88", "46", "ee", "b8", "14", "de", "5e", "0b", "db"},
+    {"e0", "32", "3a", "0a", "49", "06", "24", "5c", "c2", "d3", "ac", "62", "91", "95", "e4", "79"},
+    {"e7", "c8", "37", "6d", "8d", "d5", "4e", "a9", "6c", "56", "f4", "ea", "65", "7a", "ae", "08"},
+    {"ba", "78", "25", "2e", "1c", "a6", "b4", "c6", "e8", "dd", "74", "1f", "4b", "bd", "8b", "8a"},
+    {"70", "3e", "b5", "66", "48", "03", "f6", "0e", "61", "35", "57", "b9", "86", "c1", "1d", "9e"},
+    {"e1", "f8", "98", "11", "69", "d9", "8e", "94", "9b", "1e", "87", "e9", "ce", "55", "28", "df"},
+    {"8c", "a1", "89", "0d", "bf", "e6", "42", "68", "41", "99", "2d", "0f", "b0", "54", "bb", "16"}
+};
 
+static const int state_columns = 4;
+
+std::string SubWord(std::string temp) {
     std::string result;
 
     for (int i = 0; i < 4; i++) {
@@ -143,8 +146,15 @@ void AddRoundKey() {
 
 }
 
-void SubBytes() {
-
+void SubBytes(std::string (&state)[4][state_columns]) {
+    for (int col = 0; col < state_columns; col++) {
+        for (auto &row : state) {
+            std::string byte = row[col];
+            int col_nr = hex_to_decimal(byte[1]);
+            int row_nr = hex_to_decimal(byte[0]);
+            row[col] = s_box[row_nr][col_nr];
+        }
+    }
 }
 
 void ShiftRows() {
@@ -184,7 +194,6 @@ int main() {
      */
     std::string key;
     unsigned int number_of_rounds;
-    unsigned int state_columns = 4;
     unsigned int key_columns;
     while (true) {
         std::cout << "Please enter a 128, 192 or 256 bit key: ";
@@ -211,7 +220,8 @@ int main() {
     int state_count = 0;
     for (int i = 0; i < state_columns; i++) {
         for (int j = 0; j < 4; j++) {
-            state[j][i] = plaintext.substr(state_count * 8, 8); // Fill by column
+            std::string bin = plaintext.substr(state_count * 8, 8); // TODO: Remove convertation to binary
+            state[j][i] = bin_to_hex(bin); // Fill by column
             state_count++;
         }
     }
@@ -276,7 +286,7 @@ int main() {
         std::cout << "Round " << round << ": ";
         //TODO - do stuff
 
-        SubBytes();
+        SubBytes(state);
 
         ShiftRows();
 
