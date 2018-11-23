@@ -211,7 +211,7 @@ int main() {
     int state_count = 0;
     for (int i = 0; i < state_columns; i++) {
         for (int j = 0; j < 4; j++) {
-            state[j][i] = plaintext.substr(state_count * 8, 8); // Fill by row
+            state[j][i] = plaintext.substr(state_count * 8, 8); // Fill by column
             state_count++;
         }
     }
@@ -220,7 +220,7 @@ int main() {
     int key_count = 0;
     for (int i = 0; i < key_columns; i++) {
         for (int j = 0; j < 4; j++) {
-            cipher_key[j][i] = key.substr(key_count * 8, 8);  // Fill by row
+            cipher_key[j][i] = key.substr(key_count * 8, 8);  // Fill by column
             key_count++;
         }
     }
