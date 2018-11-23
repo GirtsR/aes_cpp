@@ -72,44 +72,71 @@ std::string bin_to_hex(std::string binary) {
     return hex;
 }
 
+int hex_to_decimal(char hex) {
+    if (hex == '0') return 0;
+    else if (hex == '1') return 1;
+    else if (hex == '2') return 2;
+    else if (hex == '3') return 3;
+    else if (hex == '4') return 4;
+    else if (hex == '5') return 5;
+    else if (hex == '6') return 6;
+    else if (hex == '7') return 7;
+    else if (hex == '8') return 8;
+    else if (hex == '9') return 9;
+    else if (hex == 'a' || hex == 'A') return 10;
+    else if (hex == 'b' || hex == 'B') return 11;
+    else if (hex == 'c' || hex == 'C') return 12;
+    else if (hex == 'd' || hex == 'D') return 13;
+    else if (hex == 'e' || hex == 'E') return 14;
+    else if (hex == 'f' || hex == 'F') return 15;
+    else return -1;
+}
+
 std::string xor_32(std::string block1, std::string block2) {
-    auto bitset = std::bitset<32>(block1) ^std::bitset<32>(block2);
+    auto bitset = std::bitset<32>(block1) ^ std::bitset<32>(block2);
     return bitset.to_string();
 }
 
 std::string SubWord(std::string temp) {
-    std::string s_box[256] = {
-        "63", "7c", "77", "7b", "f2", "6b", "6f", "c5", "30", "01", "67", "2b", "fe", "d7", "ab", "76",
-        "ca", "82", "c9", "7d", "fa", "59", "47", "f0", "ad", "d4", "a2", "af", "9c", "a4", "72", "c0",
-        "b7", "fd", "93", "26", "36", "3f", "f7", "cc", "34", "a5", "e5", "f1", "71", "d8", "31", "15",
-        "04", "c7", "23", "c3", "18", "96", "05", "9a", "07", "12", "80", "e2", "eb", "27", "b2", "75",
-        "09", "83", "2c", "1a", "1b", "6e", "5a", "a0", "52", "3b", "d6", "b3", "29", "e3", "2f", "84",
-        "53", "d1", "00", "ed", "20", "fc", "b1", "5b", "6a", "cb", "be", "39", "4a", "4c", "58", "cf",
-        "d0", "ef", "aa", "fb", "43", "4d", "33", "85", "45", "f9", "02", "7f", "50", "3c", "9f", "a8",
-        "51", "a3", "40", "8f", "92", "9d", "38", "f5", "bc", "b6", "da", "21", "10", "ff", "f3", "d2",
-        "cd", "0c", "13", "ec", "5f", "97", "44", "17", "c4", "a7", "7e", "3d", "64", "5d", "19", "73",
-        "60", "81", "4f", "dc", "22", "2a", "90", "88", "46", "ee", "b8", "14", "de", "5e", "0b", "db",
-        "e0", "32", "3a", "0a", "49", "06", "24", "5c", "c2", "d3", "ac", "62", "91", "95", "e4", "79",
-        "e7", "c8", "37", "6d", "8d", "d5", "4e", "a9", "6c", "56", "f4", "ea", "65", "7a", "ae", "08",
-        "ba", "78", "25", "2e", "1c", "a6", "b4", "c6", "e8", "dd", "74", "1f", "4b", "bd", "8b", "8a",
-        "70", "3e", "b5", "66", "48", "03", "f6", "0e", "61", "35", "57", "b9", "86", "c1", "1d", "9e",
-        "e1", "f8", "98", "11", "69", "d9", "8e", "94", "9b", "1e", "87", "e9", "ce", "55", "28", "df",
-        "8c", "a1", "89", "0d", "bf", "e6", "42", "68", "41", "99", "2d", "0f", "b0", "54", "bb", "16"
+    std::string s_box[16][16] = {
+        {"63", "7c", "77", "7b", "f2", "6b", "6f", "c5", "30", "01", "67", "2b", "fe", "d7", "ab", "76"},
+        {"ca", "82", "c9", "7d", "fa", "59", "47", "f0", "ad", "d4", "a2", "af", "9c", "a4", "72", "c0"},
+        {"b7", "fd", "93", "26", "36", "3f", "f7", "cc", "34", "a5", "e5", "f1", "71", "d8", "31", "15"},
+        {"04", "c7", "23", "c3", "18", "96", "05", "9a", "07", "12", "80", "e2", "eb", "27", "b2", "75"},
+        {"09", "83", "2c", "1a", "1b", "6e", "5a", "a0", "52", "3b", "d6", "b3", "29", "e3", "2f", "84"},
+        {"53", "d1", "00", "ed", "20", "fc", "b1", "5b", "6a", "cb", "be", "39", "4a", "4c", "58", "cf"},
+        {"d0", "ef", "aa", "fb", "43", "4d", "33", "85", "45", "f9", "02", "7f", "50", "3c", "9f", "a8"},
+        {"51", "a3", "40", "8f", "92", "9d", "38", "f5", "bc", "b6", "da", "21", "10", "ff", "f3", "d2"},
+        {"cd", "0c", "13", "ec", "5f", "97", "44", "17", "c4", "a7", "7e", "3d", "64", "5d", "19", "73"},
+        {"60", "81", "4f", "dc", "22", "2a", "90", "88", "46", "ee", "b8", "14", "de", "5e", "0b", "db"},
+        {"e0", "32", "3a", "0a", "49", "06", "24", "5c", "c2", "d3", "ac", "62", "91", "95", "e4", "79"},
+        {"e7", "c8", "37", "6d", "8d", "d5", "4e", "a9", "6c", "56", "f4", "ea", "65", "7a", "ae", "08"},
+        {"ba", "78", "25", "2e", "1c", "a6", "b4", "c6", "e8", "dd", "74", "1f", "4b", "bd", "8b", "8a"},
+        {"70", "3e", "b5", "66", "48", "03", "f6", "0e", "61", "35", "57", "b9", "86", "c1", "1d", "9e"},
+        {"e1", "f8", "98", "11", "69", "d9", "8e", "94", "9b", "1e", "87", "e9", "ce", "55", "28", "df"},
+        {"8c", "a1", "89", "0d", "bf", "e6", "42", "68", "41", "99", "2d", "0f", "b0", "54", "bb", "16"}
     };
 
     std::string result;
 
     for (int i = 0; i < 4; i++) {
-        std::string byte = temp.substr(i, 8);
-        auto location = strtol(byte.c_str(), NULL, 2);
-        result += hex_to_bin(s_box[location]);
+        std::string byte = temp.substr(i * 8, 8);
+        std::string hex_old = bin_to_hex(byte);
+        std::string hex = s_box[hex_to_decimal(hex_old[0])][hex_to_decimal(hex_old[1])];
+        result += hex;
+        std::cout << result;
     }
+    result = hex_to_bin(result);
     return result;
 }
 
 std::string RotWord(std::string temp) {
-    //TODO - implement me
-    return temp;
+    std::string parts[4];
+    for (int i = 0; i < 4; i++) {
+        parts[i] = temp.substr(i * 8, 8);
+    }
+    std::string result = parts[1] + parts[2] + parts[3] + parts[0];
+    return result;
 
 }
 void AddRoundKey() {
@@ -221,14 +248,12 @@ int main() {
     }
 
     //Round constants - https://en.wikipedia.org/wiki/Rijndael_key_schedule
-    std::string rc_i[29] = {"01", "02", "04", "08", "10", "20", "40", "80", "1B", "36",
-                            "6C", "D8", "AB", "4D", "9A", "2F", "5E", "BC", "63", "C6",
-                            "97", "35", "6A", "D4", "B3", "7D", "FA", "EF", "C5"};
+    std::string rc_i[10] = {"01", "02", "04", "08", "10", "20", "40", "80", "1B", "36"};
 
     while (i < keys_total) {
         temp = w[i - 1];
         if (i % key_columns == 0) {
-            std::string rcon_i = rc_i[i / key_columns] + "00" + "00" + "00" + "00";
+            std::string rcon_i = rc_i[(i / key_columns) - 1] + "00" + "00" + "00";
             rcon_i = hex_to_bin(rcon_i);
             temp = xor_32(SubWord(RotWord(temp)), rcon_i);
         } else if (key_columns > 6 && i % key_columns == 4) {
