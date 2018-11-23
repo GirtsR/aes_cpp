@@ -149,6 +149,12 @@ int main() {
         }
     }
 
+    /**
+     * Some keys:
+     * 128: 00101011011111100001010100010110001010001010111011010010101001101010101111110111000101011000100000001001110011110100111100111100
+     * 192: 100011100111001110110000111101111101101000001110011001000101001011001000000100001111001100101011100000001001000001111001111001010110001011111000111010101101001001010010001011000110101101111011
+     * 256: 0110000000111101111010110001000000010101110010100111000110111110001010110111001110101110111100001000010101111101011101111000000100011111001101010010110000000111001110110110000100001000110101110010110110011000000100001010001100001001000101001101111111110100
+     */
     std::string key;
     unsigned int number_of_rounds;
     unsigned int state_columns = 4;
@@ -176,8 +182,8 @@ int main() {
 
     std::string state[4][state_columns]; // 4 rows and Nb columns
     int state_count = 0;
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < state_columns; j++) {
+    for (int i = 0; i < state_columns; i++) {
+        for (int j = 0; j < 4; j++) {
             state[j][i] = plaintext.substr(state_count * 8, 8); // Fill by row
             state_count++;
         }
@@ -185,9 +191,9 @@ int main() {
 
     std::string cipher_key[4][key_columns]; // 4 rows and Nk columns
     int key_count = 0;
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < key_columns; j++) {
-            cipher_key[j][i] = plaintext.substr(key_count * 8, 8);  // Fill by row
+    for (int i = 0; i < key_columns; i++) {
+        for (int j = 0; j < 4; j++) {
+            cipher_key[j][i] = key.substr(key_count * 8, 8);  // Fill by row
             key_count++;
         }
     }
@@ -202,17 +208,16 @@ int main() {
     std::string w[keys_total];
 
     while (i < key_columns) {
-        //TODO - fix me
-        for (int j = 0; j < 4; j++) {
-            for (int k = 0; k < key_columns; k++) {
+        for (int j = 0; j < key_columns; j++) {
+            for (int k = 0; k < 4; k++) {
                 std::cout << cipher_key[k][j] << std::endl;
                 temp += cipher_key[k][j];
             }
+            w[i] = temp;
+            temp.clear();
+            std::cout << "Key " << i << ": " << w[i] << std::endl;
+            i++;
         }
-        w[i] = temp;
-        temp.clear();
-        std::cout << "Key: " << w[i] << std::endl;
-        i++;
     }
 
     //Round constants - https://en.wikipedia.org/wiki/Rijndael_key_schedule
@@ -234,7 +239,7 @@ int main() {
     }
     std::cout << "Final expanded keys:" << std::endl;
     for (int j = 0; j < i; j++) {
-        std::cout << w[i] << std::endl;
+        std::cout << j << ") " << w[j] << " | " << bin_to_hex(w[j]) << std::endl;
     }
     /**
      * KeyExpansion end
