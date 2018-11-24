@@ -9,6 +9,7 @@
 #include <bitset>
 #include <queue>
 #include <iomanip>
+#include <sstream>
 
 #define STATE_COLUMNS 4
 #define BIT_8_MASK 0b11111111
