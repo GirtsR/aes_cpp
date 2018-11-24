@@ -196,8 +196,7 @@ void SubBytes(unsigned long (&state)[4][STATE_COLUMNS]) {
     }
 }
 
-// TODO: Not sure if works
-void ShiftRows(unsigned long (&state)[4][STATE_COLUMNS]) { // TODO: I am sorry for this crap. Will rewrite it (maybe)
+void ShiftRows(unsigned long (&state)[4][STATE_COLUMNS]) {
     int row_len = 4;
     for (int row = 0; row < row_len; row++) {
         int shift_pos = row;
@@ -247,15 +246,33 @@ void MixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
 
 void InvMixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
     for (int i = 0; i < STATE_COLUMNS; i++) {
-        unsigned long tmp0 = field_mul(state[0][i],14) ^ field_mul(state[3][i],9) ^ field_mul(state[2][i],13) ^ field_mul(state[1][i],11);
-        unsigned long tmp1 = field_mul(state[1][i],14) ^ field_mul(state[0][i],9) ^ field_mul(state[3][i],13) ^ field_mul(state[2][i],11);
-        unsigned long tmp2 = field_mul(state[2][i],14) ^ field_mul(state[1][i],9) ^ field_mul(state[0][i],13) ^ field_mul(state[3][i],11);
-        unsigned long tmp3 = field_mul(state[3][i],14) ^ field_mul(state[2][i],9) ^ field_mul(state[1][i],13) ^ field_mul(state[0][i],11);
+        unsigned long tmp0 = field_mul(state[0][i], 14) ^field_mul(state[3][i], 9) ^field_mul(state[2][i], 13) ^field_mul(state[1][i], 11);
+        unsigned long tmp1 = field_mul(state[1][i], 14) ^field_mul(state[0][i], 9) ^field_mul(state[3][i], 13) ^field_mul(state[2][i], 11);
+        unsigned long tmp2 = field_mul(state[2][i], 14) ^field_mul(state[1][i], 9) ^field_mul(state[0][i], 13) ^field_mul(state[3][i], 11);
+        unsigned long tmp3 = field_mul(state[3][i], 14) ^field_mul(state[2][i], 9) ^field_mul(state[1][i], 13) ^field_mul(state[0][i], 11);
 
         state[0][i] = tmp0;
         state[1][i] = tmp1;
         state[2][i] = tmp2;
         state[3][i] = tmp3;
+    }
+}
+
+void InverseShiftRows(unsigned long (&state)[4][STATE_COLUMNS]) {
+    int row_len = 4;
+    for (int row = 0; row < row_len; row++) {
+        int shift_pos = row;
+        std::queue<unsigned long> tmp;
+        for (int pos = row_len - shift_pos; pos < row_len; pos++) {
+            tmp.push(state[row][pos]);
+        }
+        for (int pos = shift_pos; pos >= 0; pos--) {
+            state[row][pos + shift_pos] = state[row][pos];
+        }
+        for (int pos = 0; pos < shift_pos; pos++) {
+            state[row][pos] = tmp.front();
+            tmp.pop();
+        }
     }
 }
 
@@ -280,7 +297,6 @@ void print_state_bin(unsigned long (&state)[4][STATE_COLUMNS]) {
     }
     std::cout << std::endl;
 }
-
 
 int main() {
     /**
