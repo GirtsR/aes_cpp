@@ -245,6 +245,20 @@ void MixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
     }
 }
 
+void InvMixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
+    for (int i = 0; i < STATE_COLUMNS; i++) {
+        unsigned long tmp0 = field_mul(state[0][i],14) ^ field_mul(state[3][i],9) ^ field_mul(state[2][i],13) ^ field_mul(state[1][i],11);
+        unsigned long tmp1 = field_mul(state[1][i],14) ^ field_mul(state[0][i],9) ^ field_mul(state[3][i],13) ^ field_mul(state[2][i],11);
+        unsigned long tmp2 = field_mul(state[2][i],14) ^ field_mul(state[1][i],9) ^ field_mul(state[0][i],13) ^ field_mul(state[3][i],11);
+        unsigned long tmp3 = field_mul(state[3][i],14) ^ field_mul(state[2][i],9) ^ field_mul(state[1][i],13) ^ field_mul(state[0][i],11);
+
+        state[0][i] = tmp0;
+        state[1][i] = tmp1;
+        state[2][i] = tmp2;
+        state[3][i] = tmp3;
+    }
+}
+
 void print_state_hex(unsigned long (&state)[4][STATE_COLUMNS]) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
