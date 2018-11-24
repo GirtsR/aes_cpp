@@ -424,7 +424,7 @@ int main() {
         }
     }
 
-    std::cout << "------------------------------" << "\nCiphertext:\n Hex:";
+    std::cout << "------------------------------" << "\nCiphertext:\nHex:";
     print_state_hex(state);
     std::cout << "Binary:";
     print_state_bin(state);
