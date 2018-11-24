@@ -167,12 +167,13 @@ std::string RotWord(std::string temp) {
 void AddRoundKey(unsigned long (&state)[4][STATE_COLUMNS], std::string w[], unsigned int round) {
     unsigned l = round * STATE_COLUMNS;
 
+    std::cout << "Key schedule: ";
     for (int col = 0; col < STATE_COLUMNS; col++) {
         unsigned long column = 0;
         for (int i = 0; i < 4; i++) {
             column = column << 8 | state[i][col];
         }
-
+        std::cout << bin_to_hex(w[l+col]);
         unsigned long word = std::stoul(w[l + col], nullptr, 2);
         unsigned long tmp = column ^word;
 
@@ -181,6 +182,7 @@ void AddRoundKey(unsigned long (&state)[4][STATE_COLUMNS], std::string w[], unsi
             tmp >>= 8;
         }
     }
+    std::cout << std::endl;
 }
 
 void SubBytes(unsigned long (&state)[4][STATE_COLUMNS]) {
@@ -248,7 +250,7 @@ void MixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
 void print_state(unsigned long (&state)[4][STATE_COLUMNS]) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            std::cout << std::hex << state[j][i] << " ";
+            std::cout << std::hex << state[j][i];
         }
     }
     std::cout << std::endl;
@@ -259,7 +261,6 @@ int main() {
      * C.1: AES-128
      * 00000000000100010010001000110011010001000101010101100110011101111000100010011001101010101011101111001100110111011110111011111111
      * 00000000000000010000001000000011000001000000010100000110000001110000100000001001000010100000101100001100000011010000111000001111
-     *
      */
     std::string plaintext;
     std::string input;
@@ -378,9 +379,6 @@ int main() {
     unsigned int round = 0;
     AddRoundKey(state, w, round);
 
-    std::cout << "Key schedule: " << std::endl;
-    print_state(state);
-
     round++;
 
     for (; round <= number_of_rounds; round++) {
@@ -403,12 +401,8 @@ int main() {
             print_state(state);
 
             AddRoundKey(state, w, round);
-            std::cout << "Key schedule: ";
-            print_state(state);
         } else { //Last round
             AddRoundKey(state, w, round);
-            std::cout << "Key schedule: ";
-            print_state(state);
         }
     }
 
