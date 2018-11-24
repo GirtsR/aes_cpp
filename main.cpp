@@ -233,10 +233,10 @@ unsigned char field_mul(unsigned char a, unsigned char b) {
 
 void MixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
     for (int i = 0; i < STATE_COLUMNS; i++) {
-        unsigned long tmp0 = field_mul(state[0][i],2) ^ field_mul(state[3][i],1) ^ field_mul(state[2][i],1) ^ field_mul(state[1][i],3);
-        unsigned long tmp1 = field_mul(state[1][i],2) ^ field_mul(state[0][i],1) ^ field_mul(state[3][i],1) ^ field_mul(state[2][i],3);
-        unsigned long tmp2 = field_mul(state[2][i],2) ^ field_mul(state[1][i],1) ^ field_mul(state[0][i],1) ^ field_mul(state[3][i],3);
-        unsigned long tmp3 = field_mul(state[3][i],2) ^ field_mul(state[2][i],1) ^ field_mul(state[1][i],1) ^ field_mul(state[0][i],3);
+        unsigned long tmp0 = field_mul(state[0][i], 2) ^field_mul(state[3][i], 1) ^field_mul(state[2][i], 1) ^field_mul(state[1][i], 3);
+        unsigned long tmp1 = field_mul(state[1][i], 2) ^field_mul(state[0][i], 1) ^field_mul(state[3][i], 1) ^field_mul(state[2][i], 3);
+        unsigned long tmp2 = field_mul(state[2][i], 2) ^field_mul(state[1][i], 1) ^field_mul(state[0][i], 1) ^field_mul(state[3][i], 3);
+        unsigned long tmp3 = field_mul(state[3][i], 2) ^field_mul(state[2][i], 1) ^field_mul(state[1][i], 1) ^field_mul(state[0][i], 3);
 
         state[0][i] = tmp0;
         state[1][i] = tmp1;
@@ -245,7 +245,7 @@ void MixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
     }
 }
 
-void print_state(unsigned long (&state)[4][STATE_COLUMNS]) {
+void print_state_hex(unsigned long (&state)[4][STATE_COLUMNS]) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             std::cout << std::setfill('0') << std::setw(2) << std::hex << state[j][i];
@@ -253,6 +253,20 @@ void print_state(unsigned long (&state)[4][STATE_COLUMNS]) {
     }
     std::cout << std::endl;
 }
+
+std::string bin_to_string(unsigned long bin) {
+    return std::bitset<8>(bin).to_string();
+}
+
+void print_state_bin(unsigned long (&state)[4][STATE_COLUMNS]) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            std::cout << bin_to_string(state[i][j]);
+        }
+    }
+    std::cout << std::endl;
+}
+
 
 int main() {
     /**
@@ -389,20 +403,20 @@ int main() {
         std::cout << "Round " << std::dec << round << ": " << std::endl;
 
         std::cout << "Start: ";
-        print_state(state);
+        print_state_hex(state);
 
         SubBytes(state);
         std::cout << "Sub Bytes: ";
-        print_state(state);
+        print_state_hex(state);
 
         ShiftRows(state);
         std::cout << "Shift rows: ";
-        print_state(state);
+        print_state_hex(state);
 
         if (round != number_of_rounds) {
             MixColumns(state);
             std::cout << "Mix columns: ";
-            print_state(state);
+            print_state_hex(state);
 
             AddRoundKey(state, w, round);
         } else { //Last round
@@ -410,8 +424,10 @@ int main() {
         }
     }
 
-    std::cout << "------------------------------" << "\nCiphertext: ";
-    print_state(state);
+    std::cout << "------------------------------" << "\nCiphertext:\n Hex:";
+    print_state_hex(state);
+    std::cout << "Binary:";
+    print_state_bin(state);
     std::cout << "------------------------------" << std::endl;
 
     return 0;
