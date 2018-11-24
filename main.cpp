@@ -8,6 +8,7 @@
 #include <iostream>
 #include <bitset>
 #include <queue>
+#include <iomanip>
 
 #define STATE_COLUMNS 4
 #define BIT_8_MASK 0b11111111
@@ -250,7 +251,7 @@ void MixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
 void print_state(unsigned long (&state)[4][STATE_COLUMNS]) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            std::cout << std::hex << state[j][i];
+            std::cout << std::setfill('0') << std::setw(2) << std::hex << state[j][i];
         }
     }
     std::cout << std::endl;
