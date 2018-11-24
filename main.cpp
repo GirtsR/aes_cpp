@@ -246,30 +246,35 @@ void MixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
     }
 }
 
+void print_state(unsigned long (&state)[4][STATE_COLUMNS]) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            std::cout << std::hex << state << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
 int main() {
     std::string plaintext;
     std::string input;
 
-    // TODO: Uncomment
-//    while (true) {
-//        std::cout << "Please enter a 128 bit or 32 hex digit plaintext: ";
-//        std::cin >> input;
-//        if (input.length() == 32) {
-//            plaintext = hex_to_bin(input);
-//            std::cout << "Entered hex, binary representation: " << plaintext << std::endl;
-//            break;
-//        } else if (input.length() == 128) {
-//            plaintext = input;
-//            std::string hex = bin_to_hex(plaintext);
-//            std::cout << "Entered binary, hex representation: " << hex << std::endl;
-//            break;
-//        } else {
-//            std::cout << "Incorrect plaintext length" << std::endl;
-//        }
-//    }
-
-// TODO: Remove
-    plaintext = "00010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001";
+    while (true) {
+        std::cout << "Please enter a 128 bit or 32 hex digit plaintext: ";
+        std::cin >> input;
+        if (input.length() == 32) {
+            plaintext = hex_to_bin(input);
+            std::cout << "Entered hex, binary representation: " << plaintext << std::endl;
+            break;
+        } else if (input.length() == 128) {
+            plaintext = input;
+            std::string hex = bin_to_hex(plaintext);
+            std::cout << "Entered binary, hex representation: " << hex << std::endl;
+            break;
+        } else {
+            std::cout << "Incorrect plaintext length" << std::endl;
+        }
+    }
 
     /**
      * Some keys:
@@ -280,32 +285,26 @@ int main() {
     std::string key;
     unsigned int number_of_rounds;
     unsigned int key_columns;
-    // TODO: Uncomment
-//    while (true) {
-//        std::cout << "Please enter a 128, 192 or 256 bit key: ";
-//        std::cin >> key;
-//        size_t key_len = key.length();
-//        if (key_len == 128) {
-//            number_of_rounds = 10;
-//            key_columns = 4;
-//            break;
-//        } else if (key_len == 192) {
-//            number_of_rounds = 12;
-//            key_columns = 6;
-//            break;
-//        } else if (key_len == 256) {
-//            number_of_rounds = 14;
-//            key_columns = 8;
-//            break;
-//        } else {
-//            std::cout << "Incorrect key length" << std::endl;
-//        }
-//    }
-
-    // TODO: Remove
-    key = "00101011011111100001010100010110001010001010111011010010101001101010101111110111000101011000100000001001110011110100111100111100";
-    number_of_rounds = 10;
-    key_columns = 4;
+    while (true) {
+        std::cout << "Please enter a 128, 192 or 256 bit key: ";
+        std::cin >> key;
+        size_t key_len = key.length();
+        if (key_len == 128) {
+            number_of_rounds = 10;
+            key_columns = 4;
+            break;
+        } else if (key_len == 192) {
+            number_of_rounds = 12;
+            key_columns = 6;
+            break;
+        } else if (key_len == 256) {
+            number_of_rounds = 14;
+            key_columns = 8;
+            break;
+        } else {
+            std::cout << "Incorrect key length" << std::endl;
+        }
+    }
 
     unsigned long state[4][STATE_COLUMNS]; // 4 rows and Nb columns
     int state_count = 0;
@@ -374,17 +373,32 @@ int main() {
     unsigned int round = 0;
     AddRoundKey(state, w, round);
 
+    std::cout << "Add Round Key: " << std::endl;
+    print_state(state);
+
     for (; round <= number_of_rounds; round++) {
         std::cout << "Round " << round << ": ";
 
         SubBytes(state);
+        std::cout << "Sub Bytes: " << std::endl;
+        print_state(state);
+
         ShiftRows(state);
+        std::cout << "Shift rows: " << std::endl;
+        print_state(state);
 
         if (round != number_of_rounds) {
             MixColumns(state);
+            std::cout << "Mix columns: " << std::endl;
+            print_state(state);
+
             AddRoundKey(state, w, round);
+            std::cout << "Add Round Key: " << std::endl;
+            print_state(state);
         } else { //Last round
             AddRoundKey(state, w, round);
+            std::cout << "Add Round Key: " << std::endl;
+            print_state(state);
         }
     }
 
