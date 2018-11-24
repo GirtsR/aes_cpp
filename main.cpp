@@ -380,7 +380,7 @@ int main() {
     round++;
 
     for (; round <= number_of_rounds; round++) {
-        std::cout << "Round " << round << ": " << std::endl;
+        std::cout << "Round " << std::dec << round << ": " << std::endl;
 
         std::cout << "Start: ";
         print_state(state);
@@ -403,6 +403,10 @@ int main() {
             AddRoundKey(state, w, round);
         }
     }
+
+    std::cout << "------------------------------" << "\nCiphertext: ";
+    print_state(state);
+    std::cout << "------------------------------" << std::endl;
 
     return 0;
 }
