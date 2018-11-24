@@ -254,8 +254,8 @@ void InvShiftRows(unsigned long (&state)[4][STATE_COLUMNS]) {
         for (int pos = row_len - shift_pos; pos < row_len; pos++) {
             tmp.push(state[row][pos]);
         }
-        for (int pos = shift_pos; pos >= 0; pos--) {
-            state[row][pos + shift_pos] = state[row][pos];
+        for (int pos = row_len - 1; pos > row_len - shift_pos; pos--) {
+            state[row][pos] = state[row][pos - shift_pos];
         }
         for (int pos = 0; pos < shift_pos; pos++) {
             state[row][pos] = tmp.front();
@@ -490,7 +490,7 @@ int main() {
 
     round_dec--;
 
-    for (int i = 1 ; i <= number_of_rounds; i++) {
+    for (int i = 1; i <= number_of_rounds; i++) {
         std::cout << "Round " << std::dec << i << ": " << std::endl;
 
         std::cout << "Start: ";
