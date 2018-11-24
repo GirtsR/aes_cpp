@@ -254,7 +254,7 @@ void InvShiftRows(unsigned long (&state)[4][STATE_COLUMNS]) {
         for (int pos = row_len - shift_pos; pos < row_len; pos++) {
             tmp.push(state[row][pos]);
         }
-        for (int pos = row_len - 1; pos > row_len - shift_pos; pos--) {
+        for (int pos = row_len - 1; pos >= shift_pos; pos--) {
             state[row][pos] = state[row][pos - shift_pos];
         }
         for (int pos = 0; pos < shift_pos; pos++) {
@@ -504,16 +504,19 @@ int main() {
         std::cout << "Sub Bytes: ";
         print_state_hex(state);
 
-        if (round_dec != number_of_rounds) {
-            AddRoundKey(state, w, round_dec);
+        AddRoundKey(state, w, round_dec);
+        std::cout << "Add round key: ";
+        print_state_hex(state);
 
+        if (i != number_of_rounds) {
             InvMixColumns(state);
             std::cout << "Mix columns: ";
             print_state_hex(state);
-        } else { //Last round
-            AddRoundKey(state, w, round_dec);
         }
+
         round_dec--;
     }
+    std::cout << "\nOut: ";
+    print_state_hex(state);
     return 0;
 }
