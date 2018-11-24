@@ -149,7 +149,6 @@ std::string SubWord(std::string temp) {
         std::string hex_old = bin_to_hex(byte);
         std::string hex = s_box[hex_to_decimal(hex_old[0])][hex_to_decimal(hex_old[1])];
         result += hex;
-        std::cout << result;
     }
     result = hex_to_bin(result);
     return result;
@@ -249,13 +248,19 @@ void MixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
 void print_state(unsigned long (&state)[4][STATE_COLUMNS]) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            std::cout << std::hex << state << " ";
+            std::cout << std::hex << state[j][i] << " ";
         }
-        std::cout << std::endl;
     }
+    std::cout << std::endl;
 }
 
 int main() {
+    /**
+     * C.1: AES-128
+     * 00000000000100010010001000110011010001000101010101100110011101111000100010011001101010101011101111001100110111011110111011111111
+     * 00000000000000010000001000000011000001000000010100000110000001110000100000001001000010100000101100001100000011010000111000001111
+     *
+     */
     std::string plaintext;
     std::string input;
 
@@ -373,31 +378,36 @@ int main() {
     unsigned int round = 0;
     AddRoundKey(state, w, round);
 
-    std::cout << "Add Round Key: " << std::endl;
+    std::cout << "Key schedule: " << std::endl;
     print_state(state);
 
+    round++;
+
     for (; round <= number_of_rounds; round++) {
-        std::cout << "Round " << round << ": ";
+        std::cout << "Round " << round << ": " << std::endl;
+
+        std::cout << "Start: ";
+        print_state(state);
 
         SubBytes(state);
-        std::cout << "Sub Bytes: " << std::endl;
+        std::cout << "Sub Bytes: ";
         print_state(state);
 
         ShiftRows(state);
-        std::cout << "Shift rows: " << std::endl;
+        std::cout << "Shift rows: ";
         print_state(state);
 
         if (round != number_of_rounds) {
             MixColumns(state);
-            std::cout << "Mix columns: " << std::endl;
+            std::cout << "Mix columns: ";
             print_state(state);
 
             AddRoundKey(state, w, round);
-            std::cout << "Add Round Key: " << std::endl;
+            std::cout << "Key schedule: ";
             print_state(state);
         } else { //Last round
             AddRoundKey(state, w, round);
-            std::cout << "Add Round Key: " << std::endl;
+            std::cout << "Key schedule: ";
             print_state(state);
         }
     }
