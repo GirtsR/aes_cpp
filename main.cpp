@@ -174,7 +174,7 @@ void AddRoundKey(unsigned long (&state)[4][STATE_COLUMNS], std::string w[], unsi
         for (int i = 0; i < 4; i++) {
             column = column << 8 | state[i][col];
         }
-        std::cout << bin_to_hex(w[l+col]);
+        std::cout << bin_to_hex(w[l + col]);
         unsigned long word = std::stoul(w[l + col], nullptr, 2);
         unsigned long tmp = column ^word;
 
@@ -215,31 +215,28 @@ void ShiftRows(unsigned long (&state)[4][STATE_COLUMNS]) { // TODO: I am sorry f
     }
 }
 
-unsigned long field_mul(unsigned long a, unsigned long b) { // Multiplication in G(256).
-    unsigned long res = 0;
-
-    for (int i = 0; i < 8; i++) {
-        if ((b & 1) != 0) {
-            res ^= a;
-        }
-
-        bool out_of_field = (a & 0x80) != 0;
+unsigned char field_mul(unsigned char a, unsigned char b) {
+    unsigned char p = 0;
+    unsigned char counter;
+    unsigned char hi_bit_set;
+    for (counter = 0; counter < 8; counter++) {
+        if ((b & 1) == 1)
+            p ^= a;
+        hi_bit_set = (a & 0x80);
         a <<= 1;
-        if (out_of_field) {
-            a ^= 0x1B;
-        }
+        if (hi_bit_set == 0x80)
+            a ^= 0x1b;
         b >>= 1;
     }
-
-    return res;
+    return p;
 }
 
 void MixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
     for (int i = 0; i < STATE_COLUMNS; i++) {
-        unsigned long tmp0 = field_mul(0x02, state[0][i]) ^field_mul(0x03, state[1][i]) ^state[2][i] ^state[3][i];
-        unsigned long tmp1 = state[0][i] ^field_mul(0x02, state[1][i]) ^field_mul(0x03, state[2][i]) ^state[3][i];
-        unsigned long tmp2 = state[0][i] ^state[1][i] ^field_mul(0x02, state[2][i]) ^field_mul(0x03, state[3][i]);
-        unsigned long tmp3 = field_mul(0x03, state[0][i]) ^state[1][i] ^state[2][i] ^field_mul(0x02, state[3][i]);
+        unsigned long tmp0 = field_mul(state[0][i],2) ^ field_mul(state[3][i],1) ^ field_mul(state[2][i],1) ^ field_mul(state[1][i],3);
+        unsigned long tmp1 = field_mul(state[1][i],2) ^ field_mul(state[0][i],1) ^ field_mul(state[3][i],1) ^ field_mul(state[2][i],3);
+        unsigned long tmp2 = field_mul(state[2][i],2) ^ field_mul(state[1][i],1) ^ field_mul(state[0][i],1) ^ field_mul(state[3][i],3);
+        unsigned long tmp3 = field_mul(state[3][i],2) ^ field_mul(state[2][i],1) ^ field_mul(state[1][i],1) ^ field_mul(state[0][i],3);
 
         state[0][i] = tmp0;
         state[1][i] = tmp1;
