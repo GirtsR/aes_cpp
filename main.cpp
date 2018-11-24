@@ -258,7 +258,7 @@ void InvMixColumns(unsigned long (&state)[4][STATE_COLUMNS]) {
     }
 }
 
-void InverseShiftRows(unsigned long (&state)[4][STATE_COLUMNS]) {
+void InvShiftRows(unsigned long (&state)[4][STATE_COLUMNS]) {
     int row_len = 4;
     for (int row = 0; row < row_len; row++) {
         int shift_pos = row;
@@ -295,7 +295,7 @@ static unsigned long inverse_s_box[16][16] = {
     {0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d,}
 };
 
-void InverseSubBytes(unsigned long (&state)[4][STATE_COLUMNS]) {
+void InvSubBytes(unsigned long (&state)[4][STATE_COLUMNS]) {
     for (int col = 0; col < STATE_COLUMNS; col++) {
         for (int row = 0; row < 4; row++) {
             unsigned long row_nr = state[row][col] >> 4; // Second digit
@@ -453,6 +453,10 @@ int main() {
      * KeyExpansion end
      */
 
+    /**
+     * Encryption
+     */
+    std::cout << "Encrypting.." << std::endl;
     unsigned int round = 0;
     AddRoundKey(state, w, round);
 
@@ -483,11 +487,45 @@ int main() {
         }
     }
 
-    std::cout << "------------------------------" << "\nCiphertext:\nHex:";
+    std::cout << "------------------------------" << "\nCiphertext:\nHex: ";
     print_state_hex(state);
-    std::cout << "Binary:";
+    std::cout << "Binary: ";
     print_state_bin(state);
     std::cout << "------------------------------" << std::endl;
 
+    /**
+     * Decryption
+     */
+    std::cout << "Decrypting.." << std::endl;
+    unsigned int round_dec = number_of_rounds;
+    AddRoundKey(state, w, round_dec);
+
+    round_dec--;
+
+    for (int i = 0 ; i <= number_of_rounds; i++) {
+        std::cout << "Round " << std::dec << i << ": " << std::endl;
+
+        std::cout << "Start: ";
+        print_state_hex(state);
+
+        InvShiftRows(state);
+        std::cout << "Shift rows: ";
+        print_state_hex(state);
+
+        InvSubBytes(state);
+        std::cout << "Sub Bytes: ";
+        print_state_hex(state);
+
+        if (round_dec != number_of_rounds) {
+            AddRoundKey(state, w, round_dec);
+
+            InvMixColumns(state);
+            std::cout << "Mix columns: ";
+            print_state_hex(state);
+        } else { //Last round
+            AddRoundKey(state, w, round_dec);
+        }
+        round_dec--;
+    }
     return 0;
 }
