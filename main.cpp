@@ -187,10 +187,10 @@ void AddRoundKey(unsigned long (&state)[4][STATE_COLUMNS], std::string w[], unsi
 
 void SubBytes(unsigned long (&state)[4][STATE_COLUMNS]) {
     for (int col = 0; col < STATE_COLUMNS; col++) {
-        for (auto &row : state) {
-            unsigned long col_nr = row[col] >> 4; // Second digit
-            unsigned long row_nr = row[col] & BIT_4_MASK; // first digit
-            row[col] = s_box_int[row_nr][col_nr];
+        for (int row = 0; row < 4; row++) {
+            unsigned long row_nr = state[row][col] >> 4; // Second digit
+            unsigned long col_nr = state[row][col] & BIT_4_MASK; // first digit
+            state[row][col] = s_box_int[row_nr][col_nr];
         }
     }
 }
