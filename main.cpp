@@ -9,6 +9,8 @@
 #include <bitset>
 #include <queue>
 
+#define STATE_COLUMNS 4
+
 std::string hex_to_bin(std::string hex) {
     std::string binary;
     for (int i = 0; i < hex.length(); i++) {
@@ -118,8 +120,6 @@ static std::string s_box[16][16] = {
     {"8c", "a1", "89", "0d", "bf", "e6", "42", "68", "41", "99", "2d", "0f", "b0", "54", "bb", "16"}
 };
 
-static const int state_columns = 4;
-
 std::string SubWord(std::string temp) {
     std::string result;
 
@@ -144,12 +144,22 @@ std::string RotWord(std::string temp) {
 
 }
 
-void AddRoundKey() {
+void AddRoundKey(std::string (&state)[4][STATE_COLUMNS], std::string w[], unsigned int round) {
+    unsigned l = round * STATE_COLUMNS;
 
+    for (int col = 0; col < STATE_COLUMNS; col++) {
+        std::string column = state[0][col] + state[1][col] + state[2][col] + state[3][col];
+        std::string tmp = xor_32(hex_to_bin(column), w[l + col]);
+
+        for (int i = 0; i < 4; i++) {
+            std::string byte = tmp.substr(i * 8, 8);
+            state[i][col] = byte;
+        }
+    }
 }
 
-void SubBytes(std::string (&state)[4][state_columns]) {
-    for (int col = 0; col < state_columns; col++) {
+void SubBytes(std::string (&state)[4][STATE_COLUMNS]) {
+    for (int col = 0; col < STATE_COLUMNS; col++) {
         for (auto &row : state) {
             std::string byte = row[col];
             int col_nr = hex_to_decimal(byte[1]);
@@ -160,7 +170,7 @@ void SubBytes(std::string (&state)[4][state_columns]) {
 }
 
 // TODO: Not sure if works
-void ShiftRows(std::string (&state)[4][state_columns]) { // TODO: I am sorry for this crap. Will rewrite it (maybe)
+void ShiftRows(std::string (&state)[4][STATE_COLUMNS]) { // TODO: I am sorry for this crap. Will rewrite it (maybe)
     int row_len = 4; // TODO: Constant
     for (int row = 0; row < row_len; row++) {
         int shift_pos = row;
@@ -201,8 +211,8 @@ unsigned long hex_to_ul(const std::string &hex) {
     return std::bitset<8>(hex_to_bin(hex)).to_ulong();
 }
 
-void MixColumns(std::string (&state)[4][state_columns]) {
-    for (int i = 0; i < state_columns; i++) {
+void MixColumns(std::string (&state)[4][STATE_COLUMNS]) {
+    for (int i = 0; i < STATE_COLUMNS; i++) {
         unsigned long z = hex_to_ul(state[0][i]); // TODO: Keep states as numbers
         unsigned long f = hex_to_ul(state[1][i]);
         unsigned long s = hex_to_ul(state[2][i]);
@@ -281,9 +291,9 @@ int main() {
     number_of_rounds = 10;
     key_columns = 4;
 
-    std::string state[4][state_columns]; // 4 rows and Nb columns
+    std::string state[4][STATE_COLUMNS]; // 4 rows and Nb columns
     int state_count = 0;
-    for (int i = 0; i < state_columns; i++) {
+    for (int i = 0; i < STATE_COLUMNS; i++) {
         for (int j = 0; j < 4; j++) {
             std::string bin = plaintext.substr(state_count * 8, 8); // TODO: Remove convertation to binary
             state[j][i] = bin_to_hex(bin); // Fill by column
@@ -345,9 +355,10 @@ int main() {
      * KeyExpansion end
      */
 
-    AddRoundKey();
+    unsigned int round = 0;
+    AddRoundKey(state, w, round);
 
-    for (unsigned int round = 1; round <= number_of_rounds; round++) {
+    for (; round <= number_of_rounds; round++) {
         std::cout << "Round " << round << ": ";
         //TODO - do stuff
 
@@ -357,9 +368,9 @@ int main() {
 
         if (round != number_of_rounds) {
             MixColumns(state);
-            AddRoundKey();
+            AddRoundKey(state, w, round);
         } else { //Last round
-            AddRoundKey();
+            AddRoundKey(state, w, round);
         }
     }
 
