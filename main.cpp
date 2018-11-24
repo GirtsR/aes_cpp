@@ -489,7 +489,7 @@ int main() {
 
     round_dec--;
 
-    for (int i = 0 ; i <= number_of_rounds; i++) {
+    for (int i = 1 ; i <= number_of_rounds; i++) {
         std::cout << "Round " << std::dec << i << ": " << std::endl;
 
         std::cout << "Start: ";
