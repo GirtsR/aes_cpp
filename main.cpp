@@ -178,30 +178,72 @@ void ShiftRows(std::string (&state)[4][state_columns]) { // TODO: I am sorry for
     }
 }
 
-void MixColumns() {
+unsigned long field_mul(unsigned long a, unsigned long b) { // Multiplication in G(256).
+    unsigned long res = 0;
 
+    for (int i = 0; i < 8; i++) {
+        if ((b & 1) != 0) {
+            res ^= a;
+        }
+
+        bool out_of_field = (a & 0x80) != 0;
+        a <<= 1;
+        if (out_of_field) {
+            a ^= 0x1B;
+        }
+        b >>= 1;
+    }
+
+    return res;
+}
+
+unsigned long hex_to_ul(const std::string &hex) {
+    return std::bitset<8>(hex_to_bin(hex)).to_ulong();
+}
+
+void MixColumns(std::string (&state)[4][state_columns]) {
+    for (int i = 0; i < state_columns; i++) {
+        unsigned long z = hex_to_ul(state[0][i]); // TODO: Keep states as numbers
+        unsigned long f = hex_to_ul(state[1][i]);
+        unsigned long s = hex_to_ul(state[2][i]);
+        unsigned long t = hex_to_ul(state[3][i]);
+
+        unsigned long tmp0 = field_mul(0x02, z) ^field_mul(0x03, f) ^s ^t;
+        unsigned long tmp1 = z ^field_mul(0x02, f) ^field_mul(0x03, s) ^t;
+        unsigned long tmp2 = z ^f ^field_mul(0x02, s) ^field_mul(0x03, t);
+        unsigned long tmp3 = field_mul(0x03, z) ^f ^s ^field_mul(0x02, t);
+
+        state[0][i] = bin_to_hex(std::bitset<8>(tmp0).to_string());
+        state[1][i] = bin_to_hex(std::bitset<8>(tmp1).to_string());
+        state[2][i] = bin_to_hex(std::bitset<8>(tmp2).to_string());
+        state[3][i] = bin_to_hex(std::bitset<8>(tmp3).to_string());
+    }
 }
 
 int main() {
     std::string plaintext;
     std::string input;
 
-    while (true) {
-        std::cout << "Please enter a 128 bit or 32 hex digit plaintext: ";
-        std::cin >> input;
-        if (input.length() == 32) {
-            plaintext = hex_to_bin(input);
-            std::cout << "Entered hex, binary representation: " << plaintext << std::endl;
-            break;
-        } else if (input.length() == 128) {
-            plaintext = input;
-            std::string hex = bin_to_hex(plaintext);
-            std::cout << "Entered binary, hex representation: " << hex << std::endl;
-            break;
-        } else {
-            std::cout << "Incorrect plaintext length" << std::endl;
-        }
-    }
+    // TODO: Uncomment
+//    while (true) {
+//        std::cout << "Please enter a 128 bit or 32 hex digit plaintext: ";
+//        std::cin >> input;
+//        if (input.length() == 32) {
+//            plaintext = hex_to_bin(input);
+//            std::cout << "Entered hex, binary representation: " << plaintext << std::endl;
+//            break;
+//        } else if (input.length() == 128) {
+//            plaintext = input;
+//            std::string hex = bin_to_hex(plaintext);
+//            std::cout << "Entered binary, hex representation: " << hex << std::endl;
+//            break;
+//        } else {
+//            std::cout << "Incorrect plaintext length" << std::endl;
+//        }
+//    }
+
+// TODO: Remove
+    plaintext = "00010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001";
 
     /**
      * Some keys:
@@ -212,26 +254,32 @@ int main() {
     std::string key;
     unsigned int number_of_rounds;
     unsigned int key_columns;
-    while (true) {
-        std::cout << "Please enter a 128, 192 or 256 bit key: ";
-        std::cin >> key;
-        size_t key_len = key.length();
-        if (key_len == 128) {
-            number_of_rounds = 10;
-            key_columns = 4;
-            break;
-        } else if (key_len == 192) {
-            number_of_rounds = 12;
-            key_columns = 6;
-            break;
-        } else if (key_len == 256) {
-            number_of_rounds = 14;
-            key_columns = 8;
-            break;
-        } else {
-            std::cout << "Incorrect key length" << std::endl;
-        }
-    }
+    // TODO: Uncomment
+//    while (true) {
+//        std::cout << "Please enter a 128, 192 or 256 bit key: ";
+//        std::cin >> key;
+//        size_t key_len = key.length();
+//        if (key_len == 128) {
+//            number_of_rounds = 10;
+//            key_columns = 4;
+//            break;
+//        } else if (key_len == 192) {
+//            number_of_rounds = 12;
+//            key_columns = 6;
+//            break;
+//        } else if (key_len == 256) {
+//            number_of_rounds = 14;
+//            key_columns = 8;
+//            break;
+//        } else {
+//            std::cout << "Incorrect key length" << std::endl;
+//        }
+//    }
+
+    // TODO: Remove
+    key = "00101011011111100001010100010110001010001010111011010010101001101010101111110111000101011000100000001001110011110100111100111100";
+    number_of_rounds = 10;
+    key_columns = 4;
 
     std::string state[4][state_columns]; // 4 rows and Nb columns
     int state_count = 0;
@@ -308,7 +356,7 @@ int main() {
         ShiftRows(state);
 
         if (round != number_of_rounds) {
-            MixColumns();
+            MixColumns(state);
             AddRoundKey();
         } else { //Last round
             AddRoundKey();
