@@ -309,7 +309,7 @@ std::string bin_to_string(unsigned long bin) {
 void print_state_bin(unsigned long (&state)[4][STATE_COLUMNS]) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            std::cout << bin_to_string(state[i][j]);
+            std::cout << bin_to_string(state[j][i]);
         }
     }
     std::cout << std::endl;
@@ -408,12 +408,10 @@ int main() {
     while (i < key_columns) {
         for (int j = 0; j < key_columns; j++) {
             for (int k = 0; k < 4; k++) {
-                std::cout << cipher_key[k][j] << std::endl;
                 temp += cipher_key[k][j];
             }
             w[i] = temp;
             temp.clear();
-            std::cout << "Key " << i << ": " << w[i] << std::endl;
             i++;
         }
     }
@@ -433,7 +431,7 @@ int main() {
         w[i] = xor_32(w[i - key_columns], temp);
         i++;
     }
-    std::cout << "Final expanded keys:" << std::endl;
+    std::cout << "Expanded keys:" << std::endl;
     for (int j = 0; j < i; j++) {
         std::cout << j << ") " << w[j] << " | " << bin_to_hex(w[j]) << std::endl;
     }
@@ -516,7 +514,10 @@ int main() {
 
         round_dec--;
     }
-    std::cout << "\nOut: ";
+    std::cout << "------------------------------" << "\nDecrypted message:\nHex: ";
     print_state_hex(state);
+    std::cout << "Binary: ";
+    print_state_bin(state);
+    std::cout << "------------------------------" << std::endl;
     return 0;
 }
